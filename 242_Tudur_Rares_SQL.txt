@@ -1,0 +1,658 @@
+4.
+-- Tabela "Departamente"
+CREATE TABLE  Departamente  (
+   departament_id  INT PRIMARY KEY,
+   nume_departament  VARCHAR(50) NOT NULL,
+   manager_id INT
+);
+-- Tabela "Angajati"
+CREATE TABLE  Angajati  (
+   angajat_id  INT PRIMARY KEY,
+   nume  VARCHAR(50) NOT NULL,
+   prenume  VARCHAR(50) NOT NULL,
+   email varchar(100) not null unique,
+   data_nasterii  DATE NOT NULL,
+   functie varchar(50) not null,
+   salariu int not null,
+   adresa  VARCHAR(100) NOT NULL,
+   numar_telefon  VARCHAR(20) NOT NULL,
+   manager_id  INT,
+  departament_id  INT,
+  FOREIGN KEY ( departament_id ) REFERENCES  Departamente ( departament_id ),
+   FOREIGN KEY ( manager_id ) REFERENCES  Angajati ( angajat_id )
+);
+
+ALTER TABLE Departamente
+ADD CONSTRAINT fk_manager
+FOREIGN KEY (manager_id)
+REFERENCES Angajati(angajat_id);
+
+-- Tabela "Clienti"
+CREATE TABLE  Clienti  (
+   client_id  INT PRIMARY KEY,
+   nume_client  VARCHAR(50) NOT NULL,
+   adresa  VARCHAR(100) NOT NULL,
+   numar_telefon  VARCHAR(20) NOT NULL unique,
+   email varchar(100) not null unique,
+   cod_postal int not null
+);
+
+-- Tabela "Proiecte"
+CREATE TABLE  Proiecte  (
+   proiect_id  INT PRIMARY KEY,
+   nume_proiect VARCHAR(50) NOT NULL,
+   data_inceput  DATE NOT NULL,
+   data_sfarsit  DATE NOT NULL,
+   stadiu  VARCHAR(20) NOT NULL,
+   client_id  INT NOT NULL,
+  FOREIGN KEY ( client_id ) REFERENCES  Clienti ( client_id )
+);
+
+CREATE TABLE  Modificari  (
+   modificari_id  INT PRIMARY KEY,
+   angajat_id  INT NOT NULL,
+   proiect_id INT NOT NULL,
+   data_modificare  DATE NOT NULL,
+   detalii_modificare  VARCHAR(100) NOT NULL,
+  FOREIGN KEY ( angajat_id ) REFERENCES  Angajati ( angajat_id ),
+  FOREIGN KEY ( proiect_id ) REFERENCES  Proiecte ( proiect_id )
+);
+
+-- Tabela "Tehnologii"
+CREATE TABLE  Tehnologii  (
+   tehnologie_id  INT PRIMARY KEY,
+   nume_tehnologie  VARCHAR(50) NOT NULL,
+   descriere  VARCHAR(100) NOT NULL,
+);
+
+-- Tabela "Taskuri"
+CREATE TABLE  Taskuri  (
+   task_id  INT PRIMARY KEY,
+   proiect_id  INT NOT NULL,
+   descriere_task  VARCHAR(100) NOT NULL,
+   data_deadline  DATE NOT NULL,
+   stare  VARCHAR(20) NOT NULL,
+  FOREIGN KEY ( proiect_id ) REFERENCES  Proiecte ( proiect_id )
+);
+
+-- Tabela "Feedback"
+CREATE TABLE  Feedback  (
+   feedback_id  INT PRIMARY KEY,
+   proiect_id  INT NOT NULL,
+   client_id  INT NOT NULL,
+   comentariu  VARCHAR(100) NOT NULL,
+   data_feedback date,
+  FOREIGN KEY ( proiect_id ) REFERENCES  Proiecte ( proiect_id ),
+  FOREIGN KEY ( client_id  ) REFERENCES  CLIENTI ( client_id  )
+);
+
+-- Tabela "Contracte"
+CREATE TABLE  Contracte  (
+   contract_id  INT PRIMARY KEY,
+   client_id  INT NOT NULL,
+   proiect_id int not null,
+   cost_contract int not null,
+   data_incepere  DATE NOT NULL,
+   data_incheiere  DATE NOT NULL,
+   detalii_contract  VARCHAR(100) NOT NULL,
+  FOREIGN KEY ( client_id ) REFERENCES  Clienti ( client_id ),
+  foreign key (proiect_id) references  Proiecte (proiect_id)
+);
+
+-- Tabela "Plati"
+CREATE TABLE  Plati  (
+   plata_id  INT PRIMARY KEY,
+   contract_id  INT NOT NULL,
+   suma_platita  DECIMAL(10, 2) NOT NULL,
+   data_plata  DATE NOT NULL,
+   metoda_plata  VARCHAR(20) NOT NULL,
+  FOREIGN KEY ( contract_id ) REFERENCES  Contracte ( contract_id )
+);
+
+CREATE TABLE Tehnologii_Proiecte (
+    TehnologieID INT NOT NULL ,
+    ProiectID INT NOT NULL ,
+    PRIMARY KEY (TehnologieID, ProiectID),
+    FOREIGN KEY (TehnologieID) REFERENCES Tehnologii(tehnologie_id),
+    FOREIGN KEY (ProiectID) REFERENCES Proiecte(proiect_id)
+);
+CREATE TABLE Echipe (
+    echipe_id NUMBER,
+    id_angajat NUMBER,
+    proiect_id NUMBER,
+    PRIMARY KEY (echipe_id, id_angajat),
+    CONSTRAINT fk_proiect FOREIGN KEY (proiect_id) REFERENCES Proiecte(proiect_id),
+    CONSTRAINT fk_angajati FOREIGN KEY (id_angajat) REFERENCES Angajati(angajat_id)
+);
+
+--5.
+INSERT INTO Departamente VALUES (1, 'Dezvoltare Software', NULL);
+INSERT INTO Departamente VALUES (2, 'Marketing Digital', NULL);
+INSERT INTO Departamente VALUES (3, 'Resurse Umane', NULL);
+INSERT INTO Departamente VALUES (4, 'Suport IT', NULL);
+INSERT INTO Departamente VALUES (5, 'Securitate Cibernetică', NULL);
+
+INSERT INTO Angajati VALUES (1, 'Popescu', 'Ion', 'ion.popescu@companie.com', TO_DATE('1985-01-15', 'YYYY-MM-DD'), 'Inginer Software', 7000, 'Strada Libertatii 10', '0700111222',NULL, 1);
+INSERT INTO Angajati VALUES (2, 'Ionescu', 'Ana', 'ana.ionescu@companie.com', TO_DATE('1990-05-20', 'YYYY-MM-DD'), 'Manager Proiect', 7500, 'Bulevardul Unirii 22', '0700222333', 1, 1);
+INSERT INTO Angajati VALUES (3, 'Georgescu', 'Mihai', 'mihai.georgescu@companie.com', TO_DATE('1988-02-11', 'YYYY-MM-DD'), 'Arhitect Software', 8000, 'Strada Florilor 33', '0700333444', 1, 1);
+INSERT INTO Angajati VALUES (4, 'Enache', 'Ioana', 'ioana.enache@companie.com', TO_DATE('1991-08-19', 'YYYY-MM-DD'), 'Inginer DevOps', 6800, 'Aleea Castanilor 5', '0700444555', 1, 1);
+INSERT INTO Angajati VALUES (5, 'Dumitrescu', 'Elena', 'elena.dumitrescu@companie.com', TO_DATE('1987-04-22', 'YYYY-MM-DD'), 'Analist Sistem', 6500, 'Strada Principală 12', '0700555666', 1, 1);
+INSERT INTO Angajati VALUES (6, 'Nicolescu', 'Andrei', 'andrei.nicolescu@companie.com', TO_DATE('1993-11-05', 'YYYY-MM-DD'), 'Inginer Testare', 6200, 'Bulevardul Eroilor 7', '0700666777', 1, 1);
+INSERT INTO Angajati VALUES (7, 'Marin', 'Larisa', 'larisa.marin@companie.com', TO_DATE('1986-06-14', 'YYYY-MM-DD'), 'Developer Front-end', 6400, 'Strada Libertății 23', '0700777888', 1, 1);
+INSERT INTO Angajati VALUES (8, 'Stanciu', 'Bogdan', 'bogdan.stanciu@companie.com', TO_DATE('1989-09-09', 'YYYY-MM-DD'), 'Developer Back-end', 6600, 'Aleea Soarelui 9', '0700888999', 1, 1);
+INSERT INTO Angajati VALUES (9, 'Tudor', 'Simona', 'simona.tudor@companie.com', TO_DATE('1992-12-13', 'YYYY-MM-DD'), 'Inginer Sistem', 6300, 'Strada Aviatorilor 1', '0700999000', 1, 1);
+INSERT INTO Angajati VALUES (10, 'Vlad', 'Cristina', 'cristina.vlad@companie.com', TO_DATE('1994-03-25', 'YYYY-MM-DD'), 'Analist QA', 6100, 'Strada Plopilor 2', '0700111100', 1, 1);
+INSERT INTO Angajati VALUES (11, 'Manole', 'Radu', 'radu.manole@companie.com', TO_DATE('1985-07-20', 'YYYY-MM-DD'), 'Specialist SEO', 6400, 'Strada Mărășești 4', '0700222211', NULL, 2);
+INSERT INTO Angajati VALUES (12, 'Pavel', 'Ioana', 'ioana.pavel@companie.com', TO_DATE('1986-05-18', 'YYYY-MM-DD'), 'Manager Marketing', 7300, 'Bulevardul Revoluției 16', '0700333322', 11, 2);
+INSERT INTO Angajati VALUES (13, 'Munteanu', 'Alin', 'alin.munteanu@companie.com', TO_DATE('1989-01-29', 'YYYY-MM-DD'), 'Specialist PPC', 6500, 'Strada Viitorului 5', '0700444433', 11, 2);
+INSERT INTO Angajati VALUES (14, 'Petrescu', 'Diana', 'diana.petrescu@companie.com', TO_DATE('1990-11-03', 'YYYY-MM-DD'), 'Content Creator', 6200, 'Aleea Rozelor 8', '0700555544', 11, 2);
+INSERT INTO Angajati VALUES (15, 'Ilie', 'Vasile', 'vasile.ilie@companie.com', TO_DATE('1992-08-21', 'YYYY-MM-DD'), 'Grafician', 6000, 'Strada Unirii 11', '0700666655', 11, 2);
+INSERT INTO Angajati VALUES (16, 'Constantinescu', 'Elena', 'elena.constantinescu@companie.com', TO_DATE('1993-10-10', 'YYYY-MM-DD'), 'Analyst Media', 6100, 'Bulevardul Dacia 14', '0700777766', 11, 2);
+INSERT INTO Angajati VALUES (17, 'Popa', 'Mircea', 'mircea.popa@companie.com', TO_DATE('1991-06-06', 'YYYY-MM-DD'), 'Specialist Email Marketing', 6300, 'Strada Pacii 17', '0700888877', 11, 2);
+INSERT INTO Angajati VALUES (18, 'Andrei', 'Marius', 'marius.andrei@companie.com', TO_DATE('1994-04-04', 'YYYY-MM-DD'), 'Manager Campanii', 7200, 'Aleea Libertății 20', '0700999988', 11, 2);
+INSERT INTO Angajati VALUES (19, 'Voinea', 'Laura', 'laura.voinea@companie.com', TO_DATE('1987-03-15', 'YYYY-MM-DD'), 'Specialist PR', 6700, 'Strada Victoriei 22', '0700111199', 11, 2);
+INSERT INTO Angajati VALUES (20, 'Neagu', 'Daniel', 'daniel.neagu@companie.com', TO_DATE('1995-12-12', 'YYYY-MM-DD'), 'Specialist Social Media', 6500, 'Bulevardul Aviatorilor 25', '0700222200', 11, 2);
+INSERT INTO Angajati VALUES (21, 'State', 'Oana', 'oana.state@companie.com', TO_DATE('1984-02-28', 'YYYY-MM-DD'), 'HR Manager', 7500, 'Strada Lalelelor 28', '0700333311', NULL, 3);
+INSERT INTO Angajati VALUES (22, 'Vasile', 'Adrian', 'adrian.vasile@companie.com', TO_DATE('1986-03-15', 'YYYY-MM-DD'), 'Specialist Recrutare', 6000, 'Strada Primaverii 22', '0700333322', 21, 3);
+INSERT INTO Angajati VALUES (23, 'Moldovan', 'Alina', 'alina.moldovan@companie.com', TO_DATE('1990-07-20', 'YYYY-MM-DD'), 'Consilier HR', 5500, 'Aleea Florilor 35', '0700333333', 21, 3);
+INSERT INTO Angajati VALUES (24, 'Toma', 'Bogdan', 'bogdan.toma@companie.com', TO_DATE('1989-09-10', 'YYYY-MM-DD'), 'Specialist Beneficii', 5800, 'Strada Unirii 18', '0700333344', 21, 3);
+INSERT INTO Angajati VALUES (25, 'Iliescu', 'Carmen', 'carmen.iliescu@companie.com', TO_DATE('1988-12-05', 'YYYY-MM-DD'), 'Asistent HR', 5200, 'Bulevardul Eroilor 42', '0700333355', 21, 3);
+INSERT INTO Angajati VALUES (26, 'Manea', 'Daniel', 'daniel.manea@companie.com', TO_DATE('1992-04-25', 'YYYY-MM-DD'), 'Specialist Payroll', 5700, 'Strada Libertatii 51', '0700333366', 21, 3);
+INSERT INTO Angajati VALUES (27, 'Stan', 'Elena', 'elena.stan@companie.com', TO_DATE('1991-01-30', 'YYYY-MM-DD'), 'Coordinator HR', 6200, 'Aleea Rozelor 27', '0700333377', 21, 3);
+INSERT INTO Angajati VALUES (28, 'Dobre', 'Florin', 'florin.dobre@companie.com', TO_DATE('1993-05-15', 'YYYY-MM-DD'), 'Specialist Relații Angajați', 5400, 'Strada Viitorului 33', '0700333388', 21, 3);
+INSERT INTO Angajati VALUES (29, 'Iancu', 'Gabriela', 'gabriela.iancu@companie.com', TO_DATE('1987-08-21', 'YYYY-MM-DD'), 'Specialist Training', 5600, 'Bulevardul Independentei 17', '0700333399', 21, 3);
+INSERT INTO Angajati VALUES (30, 'Marin', 'Horia', 'horia.marin@companie.com', TO_DATE('1994-11-11', 'YYYY-MM-DD'), 'Specialist Recrutare IT', 5900, 'Strada Pacii 19', '0700333300', 21, 3);
+INSERT INTO Angajati VALUES (31, 'Negru', 'Irina', 'irina.negru@companie.com', TO_DATE('1985-06-09', 'YYYY-MM-DD'), 'Tehnician IT', 5300, 'Aleea Castanilor 2', '0700444411', NULL, 4);
+INSERT INTO Angajati VALUES (32, 'Luca', 'Marius', 'marius.luca@companie.com', TO_DATE('1989-03-22', 'YYYY-MM-DD'), 'Administrator Retea', 5500, 'Strada Florilor 4', '0700444422', 31, 4);
+INSERT INTO Angajati VALUES (33, 'Stoian', 'Catalin', 'catalin.stoian@companie.com', TO_DATE('1991-07-30', 'YYYY-MM-DD'), 'Support Engineer', 5200, 'Bulevardul Libertatii 7', '0700444433', 31, 4);
+INSERT INTO Angajati VALUES (34, 'Barbu', 'Diana', 'diana.barbu@companie.com', TO_DATE('1990-11-15', 'YYYY-MM-DD'), 'Tehnician Helpdesk', 5100, 'Aleea Rozelor 9', '0700444444', 31, 4);
+INSERT INTO Angajati VALUES (35, 'Ionescu', 'Elena', 'elena.ionescu@companie.com', TO_DATE('1992-02-20', 'YYYY-MM-DD'), 'Analist Securitate', 5400, 'Strada Unirii 12', '0700444455', 31, 4);
+INSERT INTO Angajati VALUES (36, 'Marinescu', 'Florin', 'florin.marinescu@companie.com', TO_DATE('1987-05-05', 'YYYY-MM-DD'), 'Specialist IT', 5600, 'Bulevardul Revolutiei 3', '0700444466', 31, 4);
+INSERT INTO Angajati VALUES (37, 'Nistor', 'Gabriel', 'gabriel.nistor@companie.com', TO_DATE('1994-10-10', 'YYYY-MM-DD'), 'Administrator Sistem', 5700, 'Strada Pacii 15', '0700444477', 31, 4);
+INSERT INTO Angajati VALUES (38, 'Dumitru', 'Horia', 'horia.dumitru@companie.com', TO_DATE('1988-09-09', 'YYYY-MM-DD'), 'Tehnician Retele', 5300, 'Aleea Crinilor 18', '0700444488', 31, 4);
+INSERT INTO Angajati VALUES (39, 'Popa', 'Ion', 'ion.popa@companie.com', TO_DATE('1993-08-08', 'YYYY-MM-DD'), 'Inginer Suport', 5400, 'Strada Principala 21', '0700444499', 31, 4);
+INSERT INTO Angajati VALUES (40, 'Andrei', 'Laura', 'laura.andrei@companie.com', TO_DATE('1995-06-06', 'YYYY-MM-DD'), 'Asistent Suport', 5100, 'Bulevardul Industrial 24', '0700444400', 31, 4);
+INSERT INTO Angajati VALUES (41, 'Pop', 'Ionut', 'ionut.pop@companie.com', TO_DATE('1986-04-04', 'YYYY-MM-DD'), 'Analist Securitate', 5800, 'Strada Libertatii 27', '0700555511', NULL, 5);
+INSERT INTO Angajati VALUES (42, 'Mihai', 'Bogdan', 'bogdan.mihai@companie.com', TO_DATE('1990-12-12', 'YYYY-MM-DD'), 'Inginer Securitate', 6000, 'Bulevardul Unirii 30', '0700555522', 41, 5);
+INSERT INTO Angajati VALUES (43, 'Nicolae', 'Cristina', 'cristina.nicolae@companie.com', TO_DATE('1987-11-11', 'YYYY-MM-DD'), 'Specialist Securitate IT', 5700, 'Aleea Soarelui 33', '0700555533', 41, 5);
+INSERT INTO Angajati VALUES (44, 'Ilie', 'Doru', 'doru.ilie@companie.com', TO_DATE('1989-10-10', 'YYYY-MM-DD'), 'Consultant Securitate', 5900, 'Strada Victoriei 36', '0700555544', 41, 5);
+INSERT INTO Angajati VALUES (45, 'Constantin', 'Elena', 'elena.constantin@companie.com', TO_DATE('1992-09-09', 'YYYY-MM-DD'), 'Inginer Criptografie', 6100, 'Bulevardul Eroilor 39', '0700555555', 41, 5);
+INSERT INTO Angajati VALUES (46, 'Stanescu', 'Flaviu', 'flaviu.stanescu@companie.com', TO_DATE('1993-08-08', 'YYYY-MM-DD'), 'Analist Malware', 5600, 'Aleea Castanilor 42', '0700555566', 41, 5);
+INSERT INTO Angajati VALUES (47, 'Dinu', 'George', 'george.dinu@companie.com', TO_DATE('1984-07-07', 'YYYY-MM-DD'), 'Specialist Securitate Rețea', 5800, 'Strada Muncii 45', '0700555577', 41, 5);
+INSERT INTO Angajati VALUES (48, 'Ene', 'Horia', 'horia.ene@companie.com', TO_DATE('1985-06-06', 'YYYY-MM-DD'), 'Inginer Securitate Date', 5900, 'Bulevardul Industriei 48', '0700555588', 41, 5);
+INSERT INTO Angajati VALUES (49, 'Fratila', 'Ioana', 'ioana.fratila@companie.com', TO_DATE('1991-05-05', 'YYYY-MM-DD'), 'Manager Securitate', 6200, 'Strada Florilor 51', '0700555599', 41, 5);
+INSERT INTO Angajati VALUES (50, 'Ghita', 'Julian', 'julian.ghita@companie.com', TO_DATE('1994-03-03', 'YYYY-MM-DD'), 'Tehnician Securitate', 5500, 'Aleea Primaverii 54', '0700555500', 41, 5);
+
+UPDATE Departamente SET manager_id = 1 WHERE departament_id = 1;
+UPDATE Departamente SET manager_id = 11 WHERE departament_id = 2;
+UPDATE Departamente SET manager_id = 21 WHERE departament_id = 3;
+UPDATE Departamente SET manager_id = 31 WHERE departament_id = 4;
+UPDATE Departamente SET manager_id = 41 WHERE departament_id = 5;
+
+INSERT INTO Clienti VALUES (1, 'Global Tech Inc', 'Strada Principala 1, Orașul A', '0123456789', 'contact@globaltech.com', 100001);
+INSERT INTO Clienti VALUES (2, 'Innovate LLC', 'Bulevardul Inovatiei 5, Orașul B', '0234567890', 'info@innovate-llc.com', 100002);
+INSERT INTO Clienti VALUES (3, 'CyberSafe Solutions', 'Aleea Securitatii 3, Orașul C', '0345678901', 'support@cybersafe.com', 100003);
+INSERT INTO Clienti VALUES (4, 'DataAnalytics Corp', 'Strada Datelor 8, Orașul D', '0456789012', 'hello@dataanalytics.com', 100004);
+INSERT INTO Clienti VALUES (5, 'EcoSmart Technologies', 'Drumul Inovatiei 10, Orașul E', '0567890123', 'contact@ecosmarttech.com', 100005);
+INSERT INTO Clienti VALUES (6, 'Unlimited Ltd', 'Bulevardul Unic, Nr. 10', '333-222-1111', 'info@unlimited.com', 750060);
+INSERT INTO Clienti VALUES (7, 'SoftTech Solutions', 'Strada Software, Nr. 5', '999-888-7777', 'contact@softtech.com', 850090);
+INSERT INTO Clienti VALUES (8, 'FinExpertise SA', 'Aleea Financiară, Nr. 8', '111-333-5555', 'office@finexpertise.com', 720010);
+INSERT INTO Clienti VALUES (9, 'Globetech Industries', 'Bulevardul Globe, Nr. 15', '444-777-9999', 'info@globetech.com', 660030);
+INSERT INTO Clienti VALUES (10, 'ProBusiness Solutions', 'Calea Business, Nr. 22', '666-555-4444', 'hello@probusiness.com', 920050);
+INSERT INTO Clienti VALUES (11, 'EcoGreen Ltd', 'Aleea Verde, Nr. 7', '888-999-0000', 'info@ecogreen.com', 780080);
+
+INSERT INTO Proiecte VALUES (1, 'Sistem Gestiune', TO_DATE('2022-01-01', 'YYYY-MM-DD'), TO_DATE('2022-12-31', 'YYYY-MM-DD'), 'În derulare', 1);
+INSERT INTO Proiecte VALUES (2, 'Optimizare Cloud', TO_DATE('2022-02-01', 'YYYY-MM-DD'), TO_DATE('2022-11-30', 'YYYY-MM-DD'), 'În derulare', 2);
+INSERT INTO Proiecte VALUES (3, 'Securizare Date', TO_DATE('2022-03-01', 'YYYY-MM-DD'), TO_DATE('2022-10-31', 'YYYY-MM-DD'), 'În derulare', 3);
+INSERT INTO Proiecte VALUES (4, 'Analiza Big Data', TO_DATE('2022-04-01', 'YYYY-MM-DD'), TO_DATE('2022-09-30', 'YYYY-MM-DD'), 'În derulare', 4);
+INSERT INTO Proiecte VALUES (5, 'Dezvoltare Sustenabilă', TO_DATE('2022-05-01', 'YYYY-MM-DD'), TO_DATE('2022-08-31', 'YYYY-MM-DD'), 'În derulare', 5);
+INSERT INTO Proiecte VALUES (6, 'Dezvoltare Mobile App', TO_DATE('2022-06-01', 'YYYY-MM-DD'), TO_DATE('2022-12-31', 'YYYY-MM-DD'), 'În derulare', 6);
+INSERT INTO Proiecte VALUES (7, 'AI pentru Analiză Date', TO_DATE('2022-07-01', 'YYYY-MM-DD'), TO_DATE('2023-01-31', 'YYYY-MM-DD'), 'Planificat', 7);
+INSERT INTO Proiecte VALUES (8, 'Securitate IT', TO_DATE('2022-08-01', 'YYYY-MM-DD'), TO_DATE('2023-02-28', 'YYYY-MM-DD'), 'În derulare', 8);
+INSERT INTO Proiecte VALUES (9, 'Platformă Cloud', TO_DATE('2022-09-01', 'YYYY-MM-DD'), TO_DATE('2023-03-31', 'YYYY-MM-DD'), 'În derulare', 9);
+INSERT INTO Proiecte VALUES (10, 'Sistem CRM', TO_DATE('2022-10-01', 'YYYY-MM-DD'), TO_DATE('2023-04-30', 'YYYY-MM-DD'), 'Planificat', 10);
+INSERT INTO Proiecte VALUES (11, 'Automatizare Procese', TO_DATE('2022-11-01', 'YYYY-MM-DD'), TO_DATE('2023-05-31', 'YYYY-MM-DD'), 'În derulare', 1);
+INSERT INTO Proiecte VALUES (12, 'Optimizare Infrastructură', TO_DATE('2022-12-01', 'YYYY-MM-DD'), TO_DATE('2023-06-30', 'YYYY-MM-DD'), 'Planificat', 2);
+INSERT INTO Proiecte VALUES (13, 'Analiză Competitivă', TO_DATE('2023-01-01', 'YYYY-MM-DD'), TO_DATE('2023-07-31', 'YYYY-MM-DD'), 'În derulare', 3);
+INSERT INTO Proiecte VALUES (14, 'Strategii de Marketing', TO_DATE('2023-02-01', 'YYYY-MM-DD'), TO_DATE('2023-08-31', 'YYYY-MM-DD'), 'Planificat', 4);
+INSERT INTO Proiecte VALUES (15, 'Dezvoltare Retea Vânzări', TO_DATE('2023-03-01', 'YYYY-MM-DD'), TO_DATE('2023-09-30', 'YYYY-MM-DD'), 'În derulare', 5);
+
+INSERT INTO Modificari VALUES (1, 1, 1, TO_DATE('2023-03-01', 'YYYY-MM-DD'), 'Actualizare cod sursă');
+INSERT INTO Modificari VALUES (2, 2, 2, TO_DATE('2023-04-05', 'YYYY-MM-DD'), 'Schimbare specificații');
+INSERT INTO Modificari VALUES (3, 3, 3, TO_DATE('2023-05-10', 'YYYY-MM-DD'), 'Adăugare funcționalități');
+INSERT INTO Modificari VALUES (4, 4, 4, TO_DATE('2023-06-15', 'YYYY-MM-DD'), 'Optimizare campanie publicitară');
+INSERT INTO Modificari VALUES (5, 5, 5, TO_DATE('2023-07-20', 'YYYY-MM-DD'), 'Revizuire procese de producție');
+INSERT INTO Modificari VALUES (6, 6, 6, TO_DATE('2023-08-25', 'YYYY-MM-DD'), 'Implementare sistem de monitorizare logistică');
+INSERT INTO Modificari VALUES (7, 7, 7, TO_DATE('2023-09-30', 'YYYY-MM-DD'), 'Actualizare platformă servicii clienți');
+INSERT INTO Modificari VALUES (8, 8, 8, TO_DATE('2023-10-15', 'YYYY-MM-DD'), 'Verificare procese de calitate');
+INSERT INTO Modificari VALUES (9, 9, 9, TO_DATE('2023-11-20', 'YYYY-MM-DD'), 'Analiză de contracte și litigii');
+INSERT INTO Modificari VALUES (10, 10, 10, TO_DATE('2023-12-25', 'YYYY-MM-DD'), 'Upgrade sisteme IT');
+
+INSERT INTO Tehnologii VALUES (1, 'Java', 'Limbaj de programare');
+INSERT INTO Tehnologii VALUES (2, 'Oracle Database', 'Sistem de gestionare a bazelor de date');
+INSERT INTO Tehnologii VALUES (3, 'Angular', 'Framework JavaScript');
+INSERT INTO Tehnologii VALUES (4, 'SAP', 'Sistem ERP');
+INSERT INTO Tehnologii VALUES (5, 'Marketing Automation', 'Instrumente de automatizare a marketingului');
+INSERT INTO Tehnologii VALUES (6, 'Robotica Industrială', 'Automatizare procese de producție');
+INSERT INTO Tehnologii VALUES (7, 'Sisteme de Monitorizare Logistică', 'Tehnologii IoT pentru logistică');
+INSERT INTO Tehnologii VALUES (8, 'CRM', 'Sistem de Gestiune a Relațiilor cu Clienții');
+INSERT INTO Tehnologii VALUES (9, 'ISO 9001', 'Standard de management al calității');
+INSERT INTO Tehnologii VALUES (10, 'Sisteme de Securitate IT', 'Soluții de securitate cibernetică');
+
+INSERT INTO Taskuri VALUES (1, 1, 'Implementare funcționalitate X', TO_DATE('2023-04-15', 'YYYY-MM-DD'), 'În lucru');
+INSERT INTO Taskuri VALUES (2, 2, 'Analiză financiară', TO_DATE('2023-05-30', 'YYYY-MM-DD'), 'Nou');
+INSERT INTO Taskuri VALUES (3, 3, 'Adăugare module noi', TO_DATE('2023-06-15', 'YYYY-MM-DD'), 'În lucru');
+INSERT INTO Taskuri VALUES (4, 4, 'Optimizare strategie publicitară', TO_DATE('2023-07-31', 'YYYY-MM-DD'), 'Nou');
+INSERT INTO Taskuri VALUES (5, 5, 'Revizuire procese de producție', TO_DATE('2023-08-30', 'YYYY-MM-DD'), 'În lucru');
+INSERT INTO Taskuri VALUES (6, 6, 'Implementare monitorizare logistică', TO_DATE('2023-09-15', 'YYYY-MM-DD'), 'Nou');
+INSERT INTO Taskuri VALUES (7, 7, 'Actualizare platformă servicii clienți', TO_DATE('2023-10-01', 'YYYY-MM-DD'), 'În lucru');
+INSERT INTO Taskuri VALUES (8, 8, 'Verificare procese de calitate', TO_DATE('2023-10-15', 'YYYY-MM-DD'), 'Nou');
+INSERT INTO Taskuri VALUES (9, 9, 'Analiză contracte și litigii', TO_DATE('2023-11-20', 'YYYY-MM-DD'), 'În lucru');
+INSERT INTO Taskuri VALUES (10, 10, 'Upgrade sisteme IT', TO_DATE('2023-12-25', 'YYYY-MM-DD'), 'Nou');
+
+INSERT INTO Feedback VALUES (1, 1, 1, 'Proiectul avansează bine', TO_DATE('2023-05-01', 'YYYY-MM-DD'));
+INSERT INTO Feedback VALUES (2, 2, 2, 'Colaborare eficientă', TO_DATE('2023-06-15', 'YYYY-MM-DD'));
+INSERT INTO Feedback VALUES (3, 3, 3, 'Echipa a depășit așteptările', TO_DATE('2023-07-20', 'YYYY-MM-DD'));
+INSERT INTO Feedback VALUES (4, 4, 4, 'Rezultate pozitive în campanie', TO_DATE('2023-08-25', 'YYYY-MM-DD'));
+INSERT INTO Feedback VALUES (5, 5, 5, 'Eficiență în procesele de producție', TO_DATE('2023-09-30', 'YYYY-MM-DD'));
+INSERT INTO Feedback VALUES (6, 6, 6, 'Implementare logistică fără probleme', TO_DATE('2023-10-15', 'YYYY-MM-DD'));
+INSERT INTO Feedback VALUES (7, 7, 7, 'Servicii clienți îmbunătățite', TO_DATE('2023-11-01', 'YYYY-MM-DD'));
+INSERT INTO Feedback VALUES (8, 8, 8, 'Procese de calitate respectate', TO_DATE('2023-12-15', 'YYYY-MM-DD'));
+INSERT INTO Feedback VALUES (9, 9, 9, 'Consultanță juridică excelentă', TO_DATE('2023-12-31', 'YYYY-MM-DD'));
+INSERT INTO Feedback VALUES (10, 10, 10, 'Sisteme IT actualizate cu succes', TO_DATE('2024-02-28', 'YYYY-MM-DD'));
+
+INSERT INTO Contracte VALUES (1, 1, 1, 10000, TO_DATE('2022-01-01', 'YYYY-MM-DD'), TO_DATE('2022-12-31', 'YYYY-MM-DD'), 'Contract pentru dezvoltare sistem de gestiune');
+INSERT INTO Contracte VALUES (2, 2, 2, 120000, TO_DATE('2022-02-01', 'YYYY-MM-DD'), TO_DATE('2022-11-30', 'YYYY-MM-DD'), 'Contract pentru servicii cloud optimizate');
+INSERT INTO Contracte VALUES (3, 3, 3, 34000, TO_DATE('2022-03-01', 'YYYY-MM-DD'), TO_DATE('2022-10-31', 'YYYY-MM-DD'), 'Contract pentru securizarea datelor');
+INSERT INTO Contracte VALUES (4, 4, 4, 21000, TO_DATE('2022-04-01', 'YYYY-MM-DD'), TO_DATE('2022-09-30', 'YYYY-MM-DD'), 'Contract pentru analiza Big Data');
+INSERT INTO Contracte VALUES (5, 5, 5, 40000, TO_DATE('2022-05-01', 'YYYY-MM-DD'), TO_DATE('2022-08-31', 'YYYY-MM-DD'), 'Contract pentru dezvoltare sustenabilă');
+INSERT INTO Contracte VALUES (6, 1, 6, 59000, TO_DATE('2022-06-01', 'YYYY-MM-DD'), TO_DATE('2022-12-31', 'YYYY-MM-DD'), 'Contract pentru dezvoltare aplicație mobilă');
+INSERT INTO Contracte VALUES (7, 2, 7, 20000, TO_DATE('2022-07-01', 'YYYY-MM-DD'), TO_DATE('2023-01-31', 'YYYY-MM-DD'), 'Contract pentru inteligență artificială în analiza datelor');
+INSERT INTO Contracte VALUES (8, 3, 8, 29000, TO_DATE('2022-08-01', 'YYYY-MM-DD'), TO_DATE('2023-02-28', 'YYYY-MM-DD'), 'Contract pentru soluții de securitate IT');
+INSERT INTO Contracte VALUES (9, 4, 9, 20000,TO_DATE('2022-09-01', 'YYYY-MM-DD'), TO_DATE('2023-03-31', 'YYYY-MM-DD'), 'Contract pentru platformă cloud');
+INSERT INTO Contracte VALUES (10, 5, 10, 8900, TO_DATE('2022-10-01', 'YYYY-MM-DD'), TO_DATE('2023-04-30', 'YYYY-MM-DD'), 'Contract pentru implementare sistem CRM');
+INSERT INTO Contracte VALUES (11, 1, 11, 90000,TO_DATE('2022-11-01', 'YYYY-MM-DD'), TO_DATE('2023-05-31', 'YYYY-MM-DD'), 'Contract pentru automatizarea proceselor');
+INSERT INTO Contracte VALUES (12, 2, 12, 56000, TO_DATE('2022-12-01', 'YYYY-MM-DD'), TO_DATE('2023-06-30', 'YYYY-MM-DD'), 'Contract pentru optimizarea infrastructurii');
+INSERT INTO Contracte VALUES (13, 3, 13, 27000, TO_DATE('2023-01-01', 'YYYY-MM-DD'), TO_DATE('2023-07-31', 'YYYY-MM-DD'), 'Contract pentru analiză competitivă');
+INSERT INTO Contracte VALUES (14, 4, 14, 15000, TO_DATE('2023-02-01', 'YYYY-MM-DD'), TO_DATE('2023-08-31', 'YYYY-MM-DD'), 'Contract pentru strategii de marketing');
+INSERT INTO Contracte VALUES (15, 5, 15, 30000, TO_DATE('2023-03-01', 'YYYY-MM-DD'), TO_DATE('2023-09-30', 'YYYY-MM-DD'), 'Contract pentru dezvoltarea rețelei de vânzări');
+
+INSERT INTO Plati VALUES (1, 1, 5000.00, TO_DATE('2023-02-15', 'YYYY-MM-DD'), 'Card bancar');
+INSERT INTO Plati VALUES (2, 2, 7500.00, TO_DATE('2023-03-20', 'YYYY-MM-DD'), 'Transfer bancar');
+INSERT INTO Plati VALUES (3, 3, 6000.00, TO_DATE('2023-04-25', 'YYYY-MM-DD'), 'Asigurare cec');
+INSERT INTO Plati VALUES (4, 4, 8000.00, TO_DATE('2023-05-30', 'YYYY-MM-DD'), 'Ordin de plată');
+INSERT INTO Plati VALUES (5, 5, 7000.00, TO_DATE('2023-06-15', 'YYYY-MM-DD'), 'Card de credit');
+INSERT INTO Plati VALUES (6, 6, 9000.00, TO_DATE('2023-07-20', 'YYYY-MM-DD'), 'Transfer bancar');
+INSERT INTO Plati VALUES (7, 7, 7200.00, TO_DATE('2023-08-25', 'YYYY-MM-DD'), 'Ordin de plată');
+INSERT INTO Plati VALUES (8, 8, 6000.00, TO_DATE('2023-09-30', 'YYYY-MM-DD'), 'Card bancar');
+INSERT INTO Plati VALUES (9, 9, 8500.00, TO_DATE('2023-10-15', 'YYYY-MM-DD'), 'Transfer bancar');
+INSERT INTO Plati VALUES (10, 10, 7000.00, TO_DATE('2023-11-20', 'YYYY-MM-DD'), 'Ordin de plată');
+
+INSERT INTO Tehnologii_Proiecte (TEHNOLOGIEID, PROIECTID) VALUES (1, 1);
+INSERT INTO Tehnologii_Proiecte (TEHNOLOGIEID, PROIECTID) VALUES (2, 1);
+INSERT INTO Tehnologii_Proiecte (TEHNOLOGIEID, PROIECTID) VALUES (3, 1);
+INSERT INTO Tehnologii_Proiecte (TEHNOLOGIEID, PROIECTID) VALUES (3, 2);
+INSERT INTO Tehnologii_Proiecte (TEHNOLOGIEID, PROIECTID) VALUES (4, 2);
+INSERT INTO Tehnologii_Proiecte (TEHNOLOGIEID, PROIECTID) VALUES (5, 2);
+INSERT INTO Tehnologii_Proiecte (TEHNOLOGIEID, PROIECTID) VALUES (6, 2);
+INSERT INTO Tehnologii_Proiecte (TEHNOLOGIEID, PROIECTID) VALUES (7, 3);
+INSERT INTO Tehnologii_Proiecte (TEHNOLOGIEID, PROIECTID) VALUES (8, 3);
+INSERT INTO Tehnologii_Proiecte (TEHNOLOGIEID, PROIECTID) VALUES (9, 3);
+INSERT INTO Tehnologii_Proiecte (TEHNOLOGIEID, PROIECTID) VALUES (10, 3);
+
+INSERT INTO Echipe VALUES (1, 1, 1);
+INSERT INTO Echipe VALUES (2, 2, 1);
+INSERT INTO Echipe VALUES (3, 3, 2);
+INSERT INTO Echipe VALUES (4, 4, 2);
+INSERT INTO Echipe VALUES (5, 5, 3);
+INSERT INTO Echipe VALUES (6, 6, 3);
+INSERT INTO Echipe VALUES (7, 7, 4);
+INSERT INTO Echipe VALUES (8, 8, 4);
+INSERT INTO Echipe VALUES (9, 9, 5);
+INSERT INTO Echipe VALUES (10, 10, 5);
+INSERT INTO Echipe VALUES (11, 11, 6);
+INSERT INTO Echipe VALUES (12, 12, 6);
+INSERT INTO Echipe VALUES (13, 13, 7);
+INSERT INTO Echipe VALUES (14, 14, 7);
+INSERT INTO Echipe VALUES (15, 15, 8);
+
+
+--6. Se dorește generarea unui raport pentru un anumit departament. Raportul trebuie să includă: Lista angajatilor din acel departament, salariul mediu din acel departament si managerii acelui departament
+CREATE OR REPLACE PROCEDURE GenereazaRaportDepartament(dept_id IN NUMBER) IS
+    TYPE t_nume_angajat_tab IS TABLE OF VARCHAR2(100) INDEX BY PLS_INTEGER;
+    nume_angajati t_nume_angajat_tab;
+
+    TYPE t_salarii_varray IS VARRAY(100) OF NUMBER;
+    salarii t_salarii_varray := t_salarii_varray();
+
+    TYPE t_manager_rec IS record (
+        nume_manager VARCHAR2(50),
+        prenume_manager VARCHAR2(50),
+        functie_manager VARCHAR2(50)
+    );
+    TYPE t_manager_tab IS TABLE OF t_manager_rec;
+    manageri t_manager_tab;
+
+    salariu_mediu NUMBER;
+    total_salarii NUMBER := 0;
+    idx PLS_INTEGER := 1;
+BEGIN
+    FOR rec IN (SELECT nume || ' ' || prenume AS nume_complet FROM Angajati WHERE departament_id = dept_id) LOOP
+        nume_angajati(idx) := rec.nume_complet;
+        idx := idx + 1;
+    END LOOP;
+    SELECT salariu
+    BULK COLLECT INTO salarii
+    FROM Angajati
+    WHERE departament_id = dept_id;
+    FOR i IN 1..salarii.COUNT LOOP
+        total_salarii := total_salarii + salarii(i);
+    END LOOP;
+    salariu_mediu := CASE WHEN salarii.COUNT > 0 THEN total_salarii / salarii.COUNT ELSE 0 END;
+    SELECT A.NUME, A.PRENUME, A.FUNCTIE
+    BULK COLLECT INTO manageri
+    FROM Angajati A
+    WHERE angajat_id IN (SELECT DISTINCT manager_id FROM Angajati WHERE departament_id = dept_id AND manager_id IS NOT NULL);
+    DBMS_OUTPUT.PUT_LINE('Raport pentru Departamentul cu ID: ' || dept_id);
+    DBMS_OUTPUT.PUT_LINE('Lista Angajatilor:');
+    idx := nume_angajati.FIRST;
+    WHILE idx IS NOT NULL LOOP
+        DBMS_OUTPUT.PUT_LINE(nume_angajati(idx));
+        idx := nume_angajati.NEXT(idx);
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('Salariu Mediu: ' || salariu_mediu);
+    DBMS_OUTPUT.PUT_LINE('Lista Managerilor:');
+    FOR i IN 1..manageri.COUNT LOOP
+        DBMS_OUTPUT.PUT_LINE('Nume: ' || manageri(i).nume_manager || ', Prenume: ' || manageri(i).prenume_manager || ', Functie: ' || manageri(i).functie_manager);
+    END LOOP;
+END;
+
+BEGIN
+    GenereazaRaportDepartament(1);
+END;
+
+-- 7. Se cere ca pentru fiecare departament sa se afiseze proiectele care se afla intr-un anumit stadiu, si numele si prenumele fiecarui angajat care lucreaza la acel proiect
+CREATE OR REPLACE PROCEDURE AnalizaProiecte(v_stadiu varchar2) IS
+    TYPE cursor_dinamic IS REF CURSOR;
+    cursor_departamente cursor_dinamic;
+    departament_id NUMBER;
+    numar_proiecte NUMBER;
+    CURSOR cursor_angajati(dept_id NUMBER) IS
+        SELECT a.nume, a.PRENUME, p.nume_proiect
+        FROM Angajati a
+        Join ECHIPE E on a.ANGAJAT_ID = E.ID_ANGAJAT
+        JOIN Proiecte p ON E.proiect_id = p.proiect_id
+        WHERE a.departament_id = dept_id AND p.stadiu = v_stadiu;
+BEGIN
+    OPEN cursor_departamente FOR
+        SELECT d.departament_id, COUNT(p.proiect_id) AS numar_proiecte
+        FROM Departamente d
+        JOIN Angajati a ON d.departament_id = a.departament_id
+        Join ECHIPE E on a.ANGAJAT_ID = E.ID_ANGAJAT
+        JOIN Proiecte p ON E.proiect_id = p.proiect_id
+        WHERE upper(p.stadiu) = upper(v_stadiu)
+        GROUP BY d.departament_id;
+    LOOP
+        FETCH cursor_departamente INTO departament_id, numar_proiecte;
+        EXIT WHEN cursor_departamente%NOTFOUND;
+
+        DBMS_OUTPUT.PUT_LINE('Departament ' || departament_id || ' - Număr Proiecte: ' || numar_proiecte);
+    FOR REC IN cursor_angajati(departament_id) LOOP
+        DBMS_OUTPUT.PUT_LINE('Angajat: ' || REC.NUME ||' '|| REC.PRENUME || ', Proiect: ' || REC.NUME_PROIECT);
+        end loop;
+    END LOOP;
+    CLOSE cursor_departamente;
+END;
+
+BEGIN
+    AnalizaProiecte('În derulare');
+END;
+
+--8. Se cere sa se afiseze costul tututor contractelor pentru anumit client si daca costul contractelor acelui client depaseste un prag
+CREATE OR REPLACE FUNCTION CalculeazaCostTotalContracte(v_client_id IN NUMBER, prag_cost IN NUMBER)
+RETURN NUMBER IS
+    ClientInexistent EXCEPTION;
+    PragDepasit EXCEPTION;
+
+    cost_total NUMBER := 0;
+
+BEGIN
+    SELECT SUM(c.cost_contract)
+    INTO cost_total
+    FROM Contracte c
+    JOIN Proiecte p ON c.proiect_id = p.proiect_id
+    JOIN Clienti cl ON c.client_id = cl.client_id
+    WHERE cl.client_id = v_client_id;
+
+    IF cost_total IS NULL THEN
+        RAISE ClientInexistent;
+    END IF;
+    IF cost_total > prag_cost THEN
+        RAISE PragDepasit;
+    END IF;
+
+    RETURN cost_total;
+
+EXCEPTION
+    WHEN ClientInexistent THEN
+        DBMS_OUTPUT.PUT_LINE('Excepție: Clientul nu există.');
+        RETURN NULL;
+    WHEN PragDepasit THEN
+        DBMS_OUTPUT.PUT_LINE('Excepție: Pragul de cost a fost depășit.');
+        RETURN cost_total;
+END;
+
+DECLARE
+    cost NUMBER;
+BEGIN
+    cost := CalculeazaCostTotalContracte(1, 1000000);
+    DBMS_OUTPUT.PUT_LINE('Cost total contracte: ' || cost);
+    cost := CalculeazaCostTotalContracte(999, 100000);
+    cost := CalculeazaCostTotalContracte(1, 10);
+END;
+
+-- 9. Se cere un raport detaliat pentru un anumit proiect care sa contina numele proiectului, numele managerului, numele clientului, stadiul curent al proiectului, si suma platita pentru acel proiect
+CREATE OR REPLACE PROCEDURE RaportProiect(v_proiect_id IN NUMBER) IS
+    v_nume_proiect VARCHAR2(100);
+    v_nume_manager VARCHAR2(100);
+    v_nume_client VARCHAR2(100);
+    v_stadiu_proiect VARCHAR2(50);
+    v_suma_platita_total DECIMAL(10,2);
+
+BEGIN
+    SELECT p.nume_proiect, a.nume || ' ' || a.prenume, cl.nume_client, p.stadiu, SUM(pl.suma_platita)
+    INTO v_nume_proiect, v_nume_manager, v_nume_client, v_stadiu_proiect, v_suma_platita_total
+    FROM Proiecte p
+    JOIN Echipe e ON p.proiect_id = e.proiect_id
+    JOIN Angajati a ON e.id_angajat = a.angajat_id AND a.manager_id IS NOT NULL
+    JOIN Clienti cl ON p.client_id = cl.client_id
+    JOIN Contracte c ON cl.client_id = c.client_id
+    JOIN Plati pl ON c.contract_id = pl.contract_id
+    WHERE p.proiect_id = v_proiect_id
+    GROUP BY p.nume_proiect, a.nume, a.prenume, cl.nume_client, p.stadiu;
+
+    DBMS_OUTPUT.PUT_LINE('Nume Proiect: ' || v_nume_proiect);
+    DBMS_OUTPUT.PUT_LINE('Manager Proiect: ' || v_nume_manager);
+    DBMS_OUTPUT.PUT_LINE('Client: ' || v_nume_client);
+    DBMS_OUTPUT.PUT_LINE('Stadiu Proiect: ' || v_stadiu_proiect);
+    DBMS_OUTPUT.PUT_LINE('Suma Plătită Total: ' || v_suma_platita_total);
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Excepție: Nu există date pentru proiectul cu ID-ul ' || v_proiect_id);
+    WHEN TOO_MANY_ROWS THEN
+        DBMS_OUTPUT.PUT_LINE('Excepție: Prea multe rânduri returnate pentru proiectul cu ID-ul ' || v_proiect_id);
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Excepție Necunoscută: ' || SQLERRM);
+END;
+
+BEGIN
+    RaportProiect(1);
+    RaportProiect(999);
+    RaportProiect(2);
+END;
+
+--LMD la nivel de comanda
+-- Un trigger care nu lasa pe nimeni sa insereze in baza de date angajati decat intre orele 8:00 AM și 21:00.
+CREATE OR REPLACE TRIGGER angajati_before_insert
+BEFORE INSERT ON Angajati
+DECLARE
+    ora_curenta NUMBER;
+BEGIN
+    SELECT TO_NUMBER(TO_CHAR(SYSDATE, 'HH24')) INTO ora_curenta FROM DUAL;
+    IF ora_curenta < 8 OR ora_curenta > 21 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Inserările sunt permise doar între orele 8:00 AM și 21:00.');
+    END IF;
+END;
+/
+
+
+
+--LMD la nivel de linie
+CREATE OR REPLACE TRIGGER VerificareNumarAngajati
+FOR INSERT OR UPDATE ON Angajati
+COMPOUND TRIGGER
+    TYPE t_departament_info IS RECORD (departament_id Departamente.departament_id%TYPE, numar_angajati NUMBER);
+    TYPE t_tabel_departamente IS TABLE OF t_departament_info INDEX BY PLS_INTEGER;
+    departamente_info t_tabel_departamente;
+    BEFORE STATEMENT IS
+    BEGIN
+        FOR r_departament IN (SELECT departament_id FROM Departamente) LOOP
+            SELECT COUNT(*)
+            INTO departamente_info(r_departament.departament_id).numar_angajati
+            FROM Angajati
+            WHERE departament_id = r_departament.departament_id;
+
+            departamente_info(r_departament.departament_id).departament_id := r_departament.departament_id;
+        END LOOP;
+    END BEFORE STATEMENT;
+    BEFORE EACH ROW IS
+    BEGIN
+        IF :NEW.departament_id IS NOT NULL THEN
+            IF departamente_info.EXISTS(:NEW.departament_id) THEN
+                IF departamente_info(:NEW.departament_id).numar_angajati > 10 THEN
+                    RAISE_APPLICATION_ERROR(-20001, 'Numarul maxim de angajati in departament a fost depasit.');
+                END IF;
+            END IF;
+        END IF;
+    END BEFORE EACH ROW;
+
+END VerificareNumarAngajati;
+
+INSERT INTO Angajati Select 93, 'Dobre', 'Florin', 'florin.dobru@companie.com', TO_DATE('1993-05-15', 'YYYY-MM-DD'), 'Specialist Relații Angajați', 6400, 'Strada Viitorului 33', '0700333388', 5, 1 from DUAL;
+
+--LDD
+CREATE TABLE AUDITURI (
+    audit_id INT PRIMARY KEY,
+    user_name VARCHAR2(30),
+    timestamp DATE,
+    operation VARCHAR2(50),
+    object_type VARCHAR2(50),
+    object_name VARCHAR2(50)
+);
+CREATE SEQUENCE seq_audit
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+
+CREATE OR REPLACE TRIGGER ddl_audit_trigger
+AFTER DDL ON SCHEMA
+DECLARE
+BEGIN
+    INSERT INTO Audituri (audit_id, user_name, timestamp, operation, object_type, object_name)
+    VALUES (seq_audit.NEXTVAL, ORA_LOGIN_USER, SYSDATE, ORA_SYSEVENT, ORA_DICT_OBJ_TYPE, ORA_DICT_OBJ_NAME);
+END;
+/
+
+--14
+CREATE OR REPLACE PACKAGE GestionareProiecte IS
+
+    TYPE t_tehnologie_info IS RECORD (
+        tehnologie_id INT,
+        nume_tehnologie VARCHAR2(100),
+        descriere VARCHAR2(200)
+    );
+
+    TYPE t_tehnologie_tab IS TABLE OF t_tehnologie_info;
+
+    FUNCTION TehnologieExista(v_proiect_id INT, v_tehnologie_id INT) RETURN BOOLEAN;
+    FUNCTION ObtineTehnologiiProiect(v_proiect_id INT) RETURN t_tehnologie_tab;
+    PROCEDURE EvalueazaStadiuProiect(v_proiect_id INT);
+    PROCEDURE AdaugaSiEvalueazaProiect(v_proiect_id INT, tehnologii_noi t_tehnologie_tab);
+
+END GestionareProiecte;
+/
+CREATE OR REPLACE PACKAGE BODY GestionareProiecte IS
+
+    FUNCTION TehnologieExista(v_proiect_id INT, v_tehnologie_id INT) RETURN BOOLEAN IS
+        v_tehnologie INT;
+    BEGIN
+        SELECT COUNT(*)
+        into v_tehnologie
+        FROM Tehnologii_Proiecte
+        WHERE PROIECTID = v_proiect_id AND TEHNOLOGIEID = v_tehnologie_id;
+
+        RETURN (v_tehnologie > 0);
+    END TehnologieExista;
+
+    FUNCTION ObtineTehnologiiProiect(v_proiect_id INT) RETURN t_tehnologie_tab IS
+        t_tehnologii t_tehnologie_tab := t_tehnologie_tab();
+    BEGIN
+        SELECT tehnologie_id, nume_tehnologie, descriere
+        BULK COLLECT INTO t_tehnologii
+        FROM Tehnologii
+        WHERE tehnologie_id IN (SELECT tehnologie_id FROM Tehnologii_Proiecte WHERE PROIECTID = v_proiect_id);
+
+        RETURN t_tehnologii;
+    END ObtineTehnologiiProiect;
+
+     PROCEDURE EvalueazaStadiuProiect(v_proiect_id INT) IS
+        stadiu_nou VARCHAR2(50);
+        stadiu_curent VARCHAR2(50);
+    BEGIN
+        select STADIU
+        into stadiu_curent
+        from PROIECTE
+        where PROIECT_ID = v_proiect_id;
+    if upper(stadiu_curent) != 'FINALIZAT' then
+        IF ObtineTehnologiiProiect(v_proiect_id).COUNT > 3  THEN
+            stadiu_nou := 'In derulare';
+        ELSE
+            stadiu_nou := 'Început';
+        END IF;
+
+        UPDATE Proiecte
+        SET stadiu = stadiu_nou
+        WHERE proiect_id = v_proiect_id;
+    end if;
+    END EvalueazaStadiuProiect;
+
+    PROCEDURE AdaugaSiEvalueazaProiect(v_proiect_id INT, tehnologii_noi t_tehnologie_tab) IS
+    BEGIN
+        FOR i IN 1..tehnologii_noi.COUNT LOOP
+            IF NOT TehnologieExista(v_proiect_id, tehnologii_noi(i).tehnologie_id) THEN
+                Insert Into TEHNOLOGII(tehnologie_id, nume_tehnologie, descriere) VALUES (tehnologii_noi(i).tehnologie_id,tehnologii_noi(i).NUME_TEHNOLOGIE,tehnologii_noi(i).DESCRIERE);
+                INSERT INTO Tehnologii_Proiecte (PROIECTID, TEHNOLOGIEID)
+                VALUES (v_proiect_id, tehnologii_noi(i).tehnologie_id);
+            END IF;
+        END LOOP;
+        EvalueazaStadiuProiect(v_proiect_id);
+    END AdaugaSiEvalueazaProiect;
+
+END GestionareProiecte;
+/
+
+DECLARE
+    tehnologii_noi PROIECT.GESTIONAREPROIECTE.T_TEHNOLOGIE_TAB;
+BEGIN
+    tehnologii_noi := PROIECT.GESTIONAREPROIECTE.T_TEHNOLOGIE_TAB();
+    tehnologii_noi.extend;
+    tehnologii_noi(1).tehnologie_id := 12;
+    tehnologii_noi(1).nume_tehnologie := 'C#';
+    tehnologii_noi(1).descriere := 'Limbaj de programare';
+    GestionareProiecte.AdaugaSiEvalueazaProiect(1, tehnologii_noi);
+END;
+/
+
+
